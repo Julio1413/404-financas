@@ -1,0 +1,29 @@
+[project]
+name = "404 Finanças"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "404 Studios"}
+]
+dependencies = [
+    "flet>=0.83.0"
+]
+
+[dependency-groups]
+dev = [
+    "flet-cli>=0.83.0",
+    "flet-desktop>=0.83.0",
+    "flet-web>=0.83.0",
+]
+
+[tool.flet]
+desktop_flavor = "light"    # Change to "full" to use flet-audio and flet-video
+org = "com.404studios"
+product = "404 Finanças"
+company = "404 Studios"
+copyright = "Copyright (C) 2026 by 404 Studios"
+
+[tool.flet.app]
+path = "src"
