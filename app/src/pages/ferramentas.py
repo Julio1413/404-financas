@@ -24,13 +24,14 @@ def get_pasta() -> str:
 #funções adaptadas para web
 def criar_arquivo(nome:str,conteudo:str,metodo='w'):
     if PASTA: #local
-        with open(os.path.join(PASTA,nome), metodo) as f:
+        with open(os.path.join(PASTA,nome), metodo, encoding="utf-8") as f:
             f.write(conteudo)
     else: #web
         cookie = SimpleCookie()
-        cookie[nome] = conteudo
-        cookie[nome]["max-age"] = 31536000 
-        cookie[nome]["path"] = "/"
+        cookie_name = nome.replace('.', '_')
+        cookie[cookie_name] = conteudo
+        cookie[cookie_name]["max-age"] = 31536000 
+        cookie[cookie_name]["path"] = "/"
         
 def ler_arquivo(nome:str, cookie_header:str='404 Studios'):
     if PASTA: #local
@@ -42,7 +43,8 @@ def ler_arquivo(nome:str, cookie_header:str='404 Studios'):
     else: #web 
         cookie = SimpleCookie()
         cookie.load(cookie_header)
-        retorno =  cookie[nome].value if nome in cookie else None           
+        cookie_name = nome.replace('.', '_')
+        retorno =  cookie[cookie_name].value if cookie_name in cookie else None           
     return retorno
 
 def deletar_arquivo(nome:str):
@@ -51,9 +53,10 @@ def deletar_arquivo(nome:str):
             os.remove(os.path.join(PASTA,nome))
     else:
         cookie = SimpleCookie()
-        cookie[nome] = ""
-        cookie[nome]["max-age"] = 0
-        cookie[nome]["path"] = "/"
+        cookie_name = nome.replace('.', '_')
+        cookie[cookie_name] = ""
+        cookie[cookie_name]["max-age"] = 0
+        cookie[cookie_name]["path"] = "/"
         
 def arquivo_existe(nome:str, cookie_header:str='404 Studios'):
     if PASTA:
@@ -61,7 +64,8 @@ def arquivo_existe(nome:str, cookie_header:str='404 Studios'):
     else:
         cookie = SimpleCookie()
         cookie.load(cookie_header)
-        return nome in cookie
+        cookie_name = nome.replace('.', '_')
+        return cookie_name in cookie
 
 #ferramentas de interface (header e container)
 def header( 
@@ -110,15 +114,16 @@ def header(
 def color_header(
         page,
         controles=[],
+        altura=350
         ):
     return ft.Container(
             gradient=ft.LinearGradient(
                 begin=ft.Alignment.TOP_CENTER,
                 end=ft.Alignment.BOTTOM_CENTER,
-                colors=[ft.Colors.BLUE_900, ft.Colors.BLUE_300]
+                colors=[ft.Colors.PURPLE_900, ft.Colors.PURPLE_300]
             ),
             width=page.width,
-            height=350,
+            height=altura,
             padding=15,
             border_radius=ft.BorderRadius.only(bottom_left=30, bottom_right=30),
             margin=ft.Margin.all(-5),

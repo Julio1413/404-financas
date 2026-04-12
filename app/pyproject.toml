@@ -1,5 +1,5 @@
 [project]
-name = "404 Finanças"
+name = "Finanças 404"
 version = "0.1.0"
 description = ""
 readme = "README.md"
@@ -20,7 +20,7 @@ dev = [
 
 [tool.flet]
 desktop_flavor = "light"    # Change to "full" to use flet-audio and flet-video
-org = "com.404studios"
+org = "com.s404.financas"
 product = "404 Finanças"
 company = "404 Studios"
 copyright = "Copyright (C) 2026 by 404 Studios"

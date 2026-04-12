@@ -41,7 +41,8 @@ async def main(page: ft.Page):
         os.makedirs(ferramentas.PASTA, exist_ok=True)
         
     
-    
+    if not ferramentas.arquivo_existe("bright_mode.txt"):
+        ferramentas.criar_arquivo(nome="bright_mode.txt",conteudo="0")
      
     # Verifica se o arquivo de cor da página existe, se não existir, cria com
     page.padding = 5
