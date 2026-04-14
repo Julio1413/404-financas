@@ -1,7 +1,6 @@
-
 import flet as ft
 import flet_charts as fch
-from pages import configs, ferramentas,login_page,todas_transacoes
+from pages import configs, ferramentas,ia,todas_transacoes
 from datetime import datetime
 import json as js
 import re
@@ -262,6 +261,23 @@ def inicial (page):
                 controls=[
                     ft.Icon(icon=ft.Icons.MONEY_ROUNDED,color=ft.Colors.PURPLE),
                     ft.Text('Todas as transações',weight=ft.FontWeight.BOLD)
+                ],
+            )
+        )
+    )
+    page.add(
+        ft.Container(
+            border_radius=30,
+            padding=ft.Padding.only(left=14,top=10,bottom=10),
+            margin=10,
+            on_click=lambda _: ia.ia(page),
+            width=page.width,
+            height=50,
+            bgcolor=ft.Colors.with_opacity(0.1,ft.Colors.GREY),
+            content=ft.Row(
+                controls=[
+                    ft.Icon(icon=ft.Icons.ADB_ROUNDED,color=ft.Colors.PURPLE),
+                    ft.Text('Recursos de IA',weight=ft.FontWeight.BOLD)
                 ],
             )
         )

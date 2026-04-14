@@ -80,7 +80,7 @@ def header(
     from pages import home
     if destino is None:
         destino = home.inicial
-    return ft.Column(controls=[ft.Container(height=60,padding=-10,
+    return ft.Column(controls=[ft.Container(height=45,padding=-10,
         content=ft.Container(alignment=ft.Alignment.BOTTOM_CENTER,
             padding=ft.Padding.only(left=padding(), right=padding(),bottom=10),
             blur=(0,0),
@@ -114,23 +114,33 @@ def header(
 def color_header(
         page,
         controles=[],
-        altura=350
+        altura=330
         ):
-    return ft.Container(
-            gradient=ft.LinearGradient(
-                begin=ft.Alignment.TOP_CENTER,
-                end=ft.Alignment.BOTTOM_CENTER,
-                colors=[ft.Colors.PURPLE_900, ft.Colors.PURPLE_300]
-            ),
-            width=page.width,
-            height=altura,
-            padding=15,
-            border_radius=ft.BorderRadius.only(bottom_left=30, bottom_right=30),
-            margin=ft.Margin.all(-5),
-            content=ft.Column(
-                controls=controles,
+    return ft.Column(
+        controls=[
+            ft.Placeholder(color=ft.Colors.TRANSPARENT,height=14),
+            ft.Row(
+                alignment=ft.MainAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        gradient=ft.LinearGradient(
+                            begin=ft.Alignment.TOP_CENTER,
+                            end=ft.Alignment.BOTTOM_CENTER,
+                            colors=[ft.Colors.PURPLE_900, ft.Colors.PURPLE_300]
+                        ),
+                        width=page.width*0.97,
+                        height=altura,
+                        padding=0,
+                        border_radius=ft.BorderRadius.only(bottom_left=30, bottom_right=30,top_left=30,top_right=30),
+                        margin=ft.Margin.all(-5),
+                        content=ft.Column(
+                            controls=controles,
+                        )
+                    )
+                ]
             )
-        )
+        ]
+    )
 
 
 def container(page,
@@ -191,6 +201,8 @@ def bottom_sheet(page,
         )
     )
     return sheet
+
+
     
 def dialog(page,
     titulo,

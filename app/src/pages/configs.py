@@ -4,6 +4,7 @@ import time
 print("Importando configs...")
 def configs(page):
     page.clean()
+    
     #Fun,ões essenciais
     def deslogar(_):
         def sair():
@@ -131,7 +132,7 @@ def configs(page):
     page.add(
         ferramentas.color_header(
             page=page,
-            altura=100,
+            altura=63,
             controles=[
                 ferramentas.header(titulo='Configurações',icone=ft.Icons.SETTINGS,page=page)
             ]

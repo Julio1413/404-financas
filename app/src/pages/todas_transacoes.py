@@ -67,7 +67,7 @@ def todas_transacoes(page,categoria='',descricao='',periodo=''):
     page.add(
         ferramentas.color_header(
             page=page,
-            altura=100,
+            altura=63,
             controles=[
                 ferramentas.header(titulo='Todas as transações',icone=ft.Icons.MONEY_ROUNDED,page=page)
             ]
@@ -91,7 +91,8 @@ def todas_transacoes(page,categoria='',descricao='',periodo=''):
         border_color=ft.Colors.PURPLE,
         label="Descrição",
         width=130,
-        focused_border_width=1
+        focused_border_width=1,
+        
     )
 
     dropdown_periodo = ft.Dropdown(
@@ -104,6 +105,7 @@ def todas_transacoes(page,categoria='',descricao='',periodo=''):
     )
 
     page.add(ft.Row(
+        height=70,
         scroll=ft.ScrollMode.HIDDEN,
         expand=True,
         alignment=ft.MainAxisAlignment.START,

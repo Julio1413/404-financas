@@ -1,5 +1,5 @@
 [project]
-name = "Finanças 404"
+name = "Finanças   404"
 version = "0.1.0"
 description = ""
 readme = "README.md"
@@ -8,7 +8,8 @@ authors = [
     { name = "404 Studios"}
 ]
 dependencies = [
-    "flet>=0.83.0"
+    "flet>=0.83.0",
+    "google-generativeai>=0.8.6"
 ]
 
 [dependency-groups]

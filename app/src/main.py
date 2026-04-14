@@ -1,3 +1,7 @@
+#pip install google-generativeai
+#pip install flet_charts
+#pip install flet[all   ]
+
 import flet as ft
 from pages import ferramentas, home, login_page
 import os, platform
@@ -22,7 +26,7 @@ async def main(page: ft.Page):
     sistema = platform.system()
     # Windows
     if sistema == "Windows":
-        ferramentas.PASTA = r"C:\CubePy\6X2"
+        ferramentas.PASTA = r"C:\404Studios\404Financas"
         os.makedirs(ferramentas.PASTA, exist_ok=True)
         
     # Android
@@ -32,7 +36,7 @@ async def main(page: ft.Page):
 
     # macOS
     elif sistema == "Darwin":
-        ferramentas.PASTA = os.path.expanduser("~/Library/Application Support/404Studios/6X2")
+        ferramentas.PASTA = os.path.expanduser("~/Library/Application Support/404Studios/404Financas")
         os.makedirs(ferramentas.PASTA, exist_ok=True)
 
     # Linux comum
