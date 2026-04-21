@@ -37,12 +37,12 @@ def inicial (page):
     data_atual = datetime.now()
     mes_atual = meses[data_atual.month - 1]
 
-    #categorias
-    if ferramentas.arquivo_existe("CATEGORIAS.txt"):
-        categorias = ferramentas.ler_arquivo("CATEGORIAS.txt").splitlines()
+    #tipos
+    if ferramentas.arquivo_existe("tipoS.txt"):
+        tipos = ferramentas.ler_arquivo("tipoS.txt").splitlines()
     else:
-        categorias = ["Alimentação", "Transporte", "Moradia"]
-        ferramentas.criar_arquivo("CATEGORIAS.txt", "\n".join(categorias))
+        tipos = ["Alimentação", "Transporte", "Moradia"]
+        ferramentas.criar_arquivo("tipoS.txt", "\n".join(tipos))
 
 
 
@@ -83,16 +83,16 @@ def inicial (page):
         #campos de entrada
         valor = ft.TextField(
             expand=True,
-            focused_border_color=ft.Colors.PURPLE_600,
+            focused_border_color=ft.Colors.DEEP_PURPLE_600,
             border_radius=40,
             label="Valor (R$)",
             value="R$ 0,00",
             keyboard_type=ft.KeyboardType.NUMBER,
             on_change=on_change_valor
         )
-        tipo = ft.Dropdown(expand=True,focused_border_color=ft.Colors.PURPLE_600,border_radius=40,label="Tipo", options=[ft.dropdown.Option("Receita"), ft.dropdown.Option("Despesa")])
-        categoria = ft.Dropdown(expand=True,focused_border_color=ft.Colors.PURPLE_600,border_radius=40,label="Categoria", options=[ft.dropdown.Option(i) for i in categorias])
-        descricao = ft.TextField(expand=True,focused_border_color=ft.Colors.PURPLE_600,border_radius=40,label="Descrição", multiline=True, keyboard_type=ft.KeyboardType.TEXT)
+        tipo = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Tipo", options=[ft.dropdown.Option("Receita"), ft.dropdown.Option("Despesa")])
+        tipo_categoria = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Tipo Categoria", options=[ft.dropdown.Option(i) for i in tipos])
+        descricao = ft.TextField(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Descrição", multiline=True, keyboard_type=ft.KeyboardType.TEXT)
 
         dlg = ferramentas.dialog(
                 page=page,
@@ -105,7 +105,7 @@ def inicial (page):
                     valor,
                     descricao,
                     tipo,
-                    categoria
+                    tipo_categoria
                 ],
             )
 
@@ -118,7 +118,7 @@ def inicial (page):
                     "valor": valor_centavos / 100.0,
                     "tipo": tipo.value,
                     "descricao": descricao.value,
-                    "categoria": categoria.value
+                    "tipo_categoria": tipo_categoria.value
                 })
                 ferramentas.criar_arquivo("TRANSAÇÕES.json", js.dumps(transacoes,indent=4, ensure_ascii=False))
                 page.show_dialog(ft.SnackBar(ft.Text("Transação adicionada com sucesso!"), bgcolor=ft.Colors.GREEN))
@@ -145,7 +145,7 @@ def inicial (page):
                 saldo -= t["valor"]
                 despesa += t["valor"]
 
-    page.floating_action_button = ft.FloatingActionButton(icon=ft.Icons.ADD,on_click=lambda _: adicionar_transacao(),bgcolor=ft.Colors.PURPLE_600,shape=ft.RoundedRectangleBorder(radius=40))
+    page.floating_action_button = ft.FloatingActionButton(icon=ft.Icons.ADD,on_click=lambda _: adicionar_transacao(),bgcolor=ft.Colors.DEEP_PURPLE_600,shape=ft.RoundedRectangleBorder(radius=40))
     page.add(
         ferramentas.color_header(page=page,
                                  controles=[
@@ -207,21 +207,20 @@ def inicial (page):
                             ft.Row(
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
-                                    ft.Text(t["descricao"],weight=ft.FontWeight.BOLD),
+                                    ft.Text(t["tipo"],weight=ft.FontWeight.BOLD),
                                     ft.Text(t["data"],size=10)
                                 ]
                             ),
                             ft.Row(
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
-                                    ft.Text(t["categoria"],size=12),
+                                    ft.Text(t["descricao"],size=12),
                                     ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["tipo"] == "Receita" else ft.Colors.RED)
                                 ]
                             )
                         ]
                     )
             )
-            historico.append(ft.Divider())
 
 
 
@@ -259,7 +258,7 @@ def inicial (page):
             bgcolor=ft.Colors.with_opacity(0.1,ft.Colors.GREY),
             content=ft.Row(
                 controls=[
-                    ft.Icon(icon=ft.Icons.MONEY_ROUNDED,color=ft.Colors.PURPLE),
+                    ft.Icon(icon=ft.Icons.MONEY_ROUNDED,color=ft.Colors.DEEP_PURPLE),
                     ft.Text('Todas as transações',weight=ft.FontWeight.BOLD)
                 ],
             )
@@ -276,7 +275,7 @@ def inicial (page):
             bgcolor=ft.Colors.with_opacity(0.1,ft.Colors.GREY),
             content=ft.Row(
                 controls=[
-                    ft.Icon(icon=ft.Icons.ADB_ROUNDED,color=ft.Colors.PURPLE),
+                    ft.Icon(icon=ft.Icons.ADB_ROUNDED,color=ft.Colors.DEEP_PURPLE),
                     ft.Text('Recursos de IA',weight=ft.FontWeight.BOLD)
                 ],
             )

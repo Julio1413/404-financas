@@ -67,8 +67,8 @@ def login_page_2(page):
 
     page.add(ft.Placeholder(height=20,color=ft.Colors.TRANSPARENT))
     #Campos de entrada
-    nome = ft.TextField(label="Nome", border_radius=40, focused_border_color=ft.Colors.PURPLE_300,expand=True,hint_text="Digite seu nome",keyboard_type=ft.KeyboardType.TEXT)
-    telefone = ft.TextField(label="Telefone", border_radius=40, focused_border_color=ft.Colors.PURPLE_300,expand=True,hint_text="Digite seu telefone",keyboard_type=ft.KeyboardType.PHONE)
+    nome = ft.TextField(label="Nome", border_radius=40, focused_border_color=ft.Colors.DEEP_PURPLE_300,expand=True,hint_text="Digite seu nome",keyboard_type=ft.KeyboardType.TEXT)
+    telefone = ft.TextField(label="Telefone", border_radius=40, focused_border_color=ft.Colors.DEEP_PURPLE_300,expand=True,hint_text="Digite seu telefone",keyboard_type=ft.KeyboardType.PHONE)
 
     # Adiciona os campos e o botão à página
     page.add(nome, telefone)
@@ -81,7 +81,7 @@ def login_page_2(page):
         width=page.width,
         height=50,
         
-        bgcolor=ft.Colors.PURPLE_300,
+        bgcolor=ft.Colors.DEEP_PURPLE_300,
         color=ft.Colors.WHITE,
     ))
     

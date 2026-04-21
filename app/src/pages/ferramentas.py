@@ -36,7 +36,7 @@ def criar_arquivo(nome:str,conteudo:str,metodo='w'):
 def ler_arquivo(nome:str, cookie_header:str='404 Studios'):
     if PASTA: #local
         if os.path.exists(os.path.join(PASTA,nome)):
-            with open(os.path.join(PASTA,nome), "r") as f:
+            with open(os.path.join(PASTA,nome), "r", encoding="utf-8") as f:
                 retorno = f.read()
         else:
             retorno =  None
@@ -126,11 +126,11 @@ def color_header(
                         gradient=ft.LinearGradient(
                             begin=ft.Alignment.TOP_CENTER,
                             end=ft.Alignment.BOTTOM_CENTER,
-                            colors=[ft.Colors.PURPLE_900, ft.Colors.PURPLE_300]
+                            colors=[ft.Colors.DEEP_PURPLE_900, ft.Colors.DEEP_PURPLE_300]
                         ),
                         width=page.width*0.97,
                         height=altura,
-                        padding=0,
+                        padding=ft.padding.only(left=12, right=12),
                         border_radius=ft.BorderRadius.only(bottom_left=30, bottom_right=30,top_left=30,top_right=30),
                         margin=ft.Margin.all(-5),
                         content=ft.Column(
