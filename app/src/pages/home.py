@@ -37,12 +37,12 @@ def inicial (page):
     data_atual = datetime.now()
     mes_atual = meses[data_atual.month - 1]
 
-    #tipos
-    if ferramentas.arquivo_existe("tipoS.txt"):
-        tipos = ferramentas.ler_arquivo("tipoS.txt").splitlines()
+    #categorias
+    if ferramentas.arquivo_existe("categorias.txt"):
+        categorias = ferramentas.ler_arquivo("categorias.txt").splitlines()
     else:
-        tipos = ["Alimentação", "Transporte", "Moradia"]
-        ferramentas.criar_arquivo("tipoS.txt", "\n".join(tipos))
+        categorias = ["Alimentação", "Transporte", "Moradia"]
+        ferramentas.criar_arquivo("categorias.txt", "\n".join(categorias))
 
 
 
@@ -90,8 +90,8 @@ def inicial (page):
             keyboard_type=ft.KeyboardType.NUMBER,
             on_change=on_change_valor
         )
-        tipo = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Tipo", options=[ft.dropdown.Option("Receita"), ft.dropdown.Option("Despesa")])
-        tipo_categoria = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Tipo Categoria", options=[ft.dropdown.Option(i) for i in tipos])
+        natureza = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Natureza", options=[ft.dropdown.Option("receita"), ft.dropdown.Option("despesa")])
+        categoria_nome = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Categoria", options=[ft.dropdown.Option(i) for i in categorias])
         descricao = ft.TextField(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Descrição", multiline=True, keyboard_type=ft.KeyboardType.TEXT)
 
         dlg = ferramentas.dialog(
@@ -104,21 +104,21 @@ def inicial (page):
                 conteudo=[
                     valor,
                     descricao,
-                    tipo,
-                    tipo_categoria
+                    natureza,
+                    categoria_nome
                 ],
             )
 
 
         def salvar():
-            if valor_centavos > 0 and tipo.value and descricao.value:
+            if valor_centavos > 0 and natureza.value and descricao.value:
                 transacoes.append({
                     "periodo":f"{data_atual.month}.{data_atual.year}",
                     "data": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                     "valor": valor_centavos / 100.0,
-                    "tipo": tipo.value,
+                    "natureza": natureza.value,
                     "descricao": descricao.value,
-                    "tipo_categoria": tipo_categoria.value
+                    "categoria_nome": categoria_nome.value
                 })
                 ferramentas.criar_arquivo("TRANSAÇÕES.json", js.dumps(transacoes,indent=4, ensure_ascii=False))
                 page.show_dialog(ft.SnackBar(ft.Text("Transação adicionada com sucesso!"), bgcolor=ft.Colors.GREEN))
@@ -134,16 +134,16 @@ def inicial (page):
         page.update()
 
     saldo = 0 
-    receita = 0
-    despesa = 0
+    receita_total = 0
+    despesa_total = 0
     for t in transacoes:
         if t["periodo"] == f"{data_atual.month}.{data_atual.year}":
-            if t["tipo"] == "Receita":
+            if t["natureza"] == "receita":
                 saldo += t["valor"]
-                receita += t["valor"]
+                receita_total += t["valor"]
             else:
                 saldo -= t["valor"]
-                despesa += t["valor"]
+                despesa_total += t["valor"]
 
     page.floating_action_button = ft.FloatingActionButton(icon=ft.Icons.ADD,on_click=lambda _: adicionar_transacao(),bgcolor=ft.Colors.DEEP_PURPLE_600,shape=ft.RoundedRectangleBorder(radius=40))
     page.add(
@@ -166,8 +166,8 @@ def inicial (page):
                                             ft.Column(
                                                 spacing=5,
                                                 controls=[
-                                                    ft.Text(f'+ R$ {receita:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700,size=25),
-                                                    ft.Text(f'- R$ {despesa:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.RED,size=25),
+                                                    ft.Text(f'+ R$ {receita_total:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700,size=25),
+                                                    ft.Text(f'- R$ {despesa_total:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.RED,size=25),
                                                 ]
                                             ),
                                             fch.PieChart(
@@ -178,16 +178,16 @@ def inicial (page):
                                                 height=100,
                                                 sections=[
                                                     fch.PieChartSection(
-                                                        value=receita if receita > 0 else 1,
+                                                        value=receita_total if receita_total > 0 else 1,
                                                         color=ft.Colors.GREEN,
                                                         badge=ft.Icon(ft.Icons.ARROW_DOWNWARD, color=ft.Colors.GREEN),
-                                                        title=f"{(receita/(receita+despesa)*100):.0f}%" if receita+despesa > 0 else "0%",
+                                                        title=f"{(receita_total/(receita_total+despesa_total)*100):.0f}%" if receita_total+despesa_total > 0 else "0%",
                                                     ),
                                                     fch.PieChartSection(
-                                                        value=despesa if despesa > 0 else 1,
+                                                        value=despesa_total if despesa_total > 0 else 1,
                                                         color=ft.Colors.RED,
                                                         badge=ft.Icon(ft.Icons.ARROW_UPWARD, color=ft.Colors.RED),
-                                                        title=f"{(despesa/(receita+despesa)*100):.0f}%" if receita+despesa > 0 else "0%",
+                                                        title=f"{(despesa_total/(receita_total+despesa_total)*100):.0f}%" if receita_total+despesa_total > 0 else "0%",
                                                     ),
                                                 ],
                                             ),
@@ -207,7 +207,7 @@ def inicial (page):
                             ft.Row(
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
-                                    ft.Text(t["tipo"],weight=ft.FontWeight.BOLD),
+                                    ft.Text(t["natureza"],weight=ft.FontWeight.BOLD),
                                     ft.Text(t["data"],size=10)
                                 ]
                             ),
@@ -215,7 +215,7 @@ def inicial (page):
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
                                     ft.Text(t["descricao"],size=12),
-                                    ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["tipo"] == "Receita" else ft.Colors.RED)
+                                    ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["natureza"] == "receita" else ft.Colors.RED)
                                 ]
                             )
                         ]

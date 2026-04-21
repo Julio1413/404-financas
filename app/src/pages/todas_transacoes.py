@@ -3,7 +3,7 @@ import flet as ft
 from pages import home,ferramentas
 import json as js
 
-def todas_transacoes(page,tipo='',descricao='',periodo=''):
+def todas_transacoes(page,natureza='',descricao='',periodo=''):
     #Limpando a página
     page.clean()
     page.floating_action_button = None
@@ -11,12 +11,12 @@ def todas_transacoes(page,tipo='',descricao='',periodo=''):
     #Funções essenciais
 
 
-    def listar_tipos():
-        if ferramentas.arquivo_existe("tipoS.txt"):
-            tipos = ferramentas.ler_arquivo("tipoS.txt").splitlines()
+    def listar_categorias():
+        if ferramentas.arquivo_existe("categorias.txt"):
+            categorias = ferramentas.ler_arquivo("categorias.txt").splitlines()
         else:
-            tipos = []
-        return tipos
+            categorias = []
+        return categorias
 
     #Listando todas as transações
     if ferramentas.arquivo_existe("TRANSAÇÕES.json"):
@@ -26,7 +26,7 @@ def todas_transacoes(page,tipo='',descricao='',periodo=''):
     
     lista_separada = []
     for t in transacoes:
-        if (tipo == '' or tipo == 'Todas' or t['tipo'] == tipo) and (descricao.lower() == '' or descricao.lower() in t['descricao'].lower()) and (periodo == '' or periodo == 'Todos' or t['periodo'] == periodo):
+        if (natureza == '' or natureza == 'todas' or t['natureza'] == natureza) and (descricao.lower() == '' or descricao.lower() in t['descricao'].lower()) and (periodo == '' or periodo == 'Todos' or t['periodo'] == periodo):
             lista_separada.append(t)
     
 
@@ -46,8 +46,8 @@ def todas_transacoes(page,tipo='',descricao='',periodo=''):
                             ft.Row(
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
-                                    ft.Text(t["tipo"],size=12),
-                                    ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["tipo"] == "Receita" else ft.Colors.RED)
+                                    ft.Text(t["natureza"],size=12),
+                                    ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["natureza"] == "receita" else ft.Colors.RED)
                                 ]
                             )
                         ]
@@ -77,13 +77,13 @@ def todas_transacoes(page,tipo='',descricao='',periodo=''):
 
     page.add(ft.Placeholder(height=1,color=ft.Colors.TRANSPARENT))
 
-    dropdown_tipo = ft.Dropdown(
-        label="tipo",
+    dropdown_natureza = ft.Dropdown(
+        label="natureza",
         width=130,
         border_color=ft.Colors.DEEP_PURPLE,
         border_radius=40,
-        options=[ft.dropdown.Option("Todas")] + [ft.dropdown.Option(i) for i in listar_tipos()],
-        value=tipo if (tipo and tipo != '') else "Todas",
+        options=[ft.dropdown.Option("todas")] + [ft.dropdown.Option(i) for i in ["receita", "despesa"]],
+        value=natureza if (natureza and natureza != '') else "todas",
     )
     
     search_bar = ft.TextField(
@@ -110,8 +110,8 @@ def todas_transacoes(page,tipo='',descricao='',periodo=''):
         expand=True,
         alignment=ft.MainAxisAlignment.START,
         controls=[
-            ft.IconButton(icon=ft.Icons.SEARCH_ROUNDED, on_click=lambda _: todas_transacoes(page, dropdown_tipo.value,search_bar.value,dropdown_periodo.value), bgcolor=ft.Colors.DEEP_PURPLE,width=50,height=50),
-            dropdown_tipo,
+            ft.IconButton(icon=ft.Icons.SEARCH_ROUNDED, on_click=lambda _: todas_transacoes(page, dropdown_natureza.value,search_bar.value,dropdown_periodo.value), bgcolor=ft.Colors.DEEP_PURPLE,width=50,height=50),
+            dropdown_natureza,
             dropdown_periodo,
             search_bar
             ]
@@ -135,7 +135,7 @@ def todas_transacoes(page,tipo='',descricao='',periodo=''):
             )
         )
     )
-    if tipo != '' or descricao != '':
+    if natureza != '' or descricao != '':
         page.show_dialog(
             ft.SnackBar(ft.Text(f'Foram encontradas {int(len(transacoes_filtradas)/2)} transações!'),bgcolor=ft.Colors.DEEP_PURPLE)
         )

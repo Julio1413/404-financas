@@ -118,7 +118,7 @@ def color_header(
         ):
     return ft.Column(
         controls=[
-            ft.Placeholder(color=ft.Colors.TRANSPARENT,height=14),
+            ft.Placeholder(color=ft.Colors.TRANSPARENT,height=page.height*0.035),
             ft.Row(
                 alignment=ft.MainAxisAlignment.CENTER,
                 controls=[

@@ -10,7 +10,7 @@ def configs(page):
         def sair():
             ferramentas.deletar_arquivo("NOME.txt")
             ferramentas.deletar_arquivo("TELEFONE.txt")
-            ferramentas.deletar_arquivo("tipoS.txt")
+            ferramentas.deletar_arquivo("categorias.txt")
             ferramentas.deletar_arquivo("TRANSAÇÕES.json")
             ferramentas.deletar_arquivo("GOOGLE_API_KEY.txt")
             page.clean()
@@ -53,30 +53,30 @@ def configs(page):
         configs(page)
         page.update()
 
-    def editar_tipos(e):
-        if ferramentas.arquivo_existe("tipoS.txt"):
-            tipos = ferramentas.ler_arquivo("tipoS.txt").splitlines()
+    def editar_categorias(e):
+        if ferramentas.arquivo_existe("categorias.txt"):
+            categorias = ferramentas.ler_arquivo("categorias.txt").splitlines()
         else:
-            tipos = ["Alimentação", "Transporte", "Moradia"]
-            ferramentas.criar_arquivo("tipoS.txt", "\n".join(tipos))
+            categorias = ["Alimentação", "Transporte", "Moradia"]
+            ferramentas.criar_arquivo("categorias.txt", "\n".join(categorias))
 
-        def apagar_tipo(e,tipo):
-            if tipo in tipos:
-                tipos.remove(tipo)
-                ferramentas.criar_arquivo("tipoS.txt", "\n".join(tipos))
+        def apagar_categoria(e,categoria):
+            if categoria in categorias:
+                categorias.remove(categoria)
+                ferramentas.criar_arquivo("categorias.txt", "\n".join(categorias))
                 ferramentas.fechar_dialog(page, dlg)
-                editar_tipos(e)
+                editar_categorias(e)
 
-        def adicionar_tipo(e):
-            campo_nome = ft.TextField(label="Nome da tipo", autofocus=True,border_color=ft.Colors.DEEP_PURPLE,border_radius=40)
+        def adicionar_categoria(e):
+            campo_nome = ft.TextField(label="Nome da categoria", autofocus=True,border_color=ft.Colors.DEEP_PURPLE,border_radius=40)
             def salvar(e):
                 nome = campo_nome.value.strip() if campo_nome.value else ""
-                if nome and nome not in tipos:
-                    tipos.append(nome)
-                    ferramentas.criar_arquivo("tipoS.txt", "\n".join(tipos))
+                if nome and nome not in categorias:
+                    categorias.append(nome)
+                    ferramentas.criar_arquivo("categorias.txt", "\n".join(categorias))
                     ferramentas.fechar_dialog(page, dlg_add)
                     ferramentas.fechar_dialog(page, dlg)
-                    editar_tipos(e)
+                    editar_categorias(e)
                 else:
                     campo_nome.error_text = "Nome inválido ou já existe"
                     page.update()
@@ -85,7 +85,7 @@ def configs(page):
                 page=page,
                 icone_d=ft.Icons.ADD_ROUNDED,
                 icone_e=ft.Icons.CATEGORY_ROUNDED,
-                titulo='Nova tipo',
+                titulo='Nova categoria',
                 texto_btn='Adicionar',
                 funcao_btn=salvar,
                 conteudo=[campo_nome]
@@ -95,7 +95,7 @@ def configs(page):
 
 
         conteudo =[]
-        for c in tipos:
+        for c in categorias:
             conteudo.append(
                 ft.Container(
                     border_radius=40,
@@ -106,7 +106,7 @@ def configs(page):
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         controls=[
                             ft.Text(value=c,weight=ft.FontWeight.BOLD,size=15),
-                            ft.IconButton(icon=ft.Icons.DELETE_ROUNDED,icon_color=ft.Colors.RED,on_click=lambda e, cat=c: apagar_tipo(e, cat)),
+                            ft.IconButton(icon=ft.Icons.DELETE_ROUNDED,icon_color=ft.Colors.RED,on_click=lambda e, cat=c: apagar_categoria(e, cat)),
                         ]
                     )
                 )
@@ -116,9 +116,9 @@ def configs(page):
             page=page,
             icone_d=ft.Icons.EDIT_ROUNDED,
             icone_e=ft.Icons.CATEGORY_ROUNDED,
-            titulo='Editar tipos',
+            titulo='Editar categorias',
             texto_btn='Adicionar',
-            funcao_btn=adicionar_tipo,
+            funcao_btn=adicionar_categoria,
             conteudo=[
                 ft.Column(
                     scroll=ft.ScrollMode.ADAPTIVE,
@@ -177,10 +177,10 @@ def configs(page):
                 alignment=ft.MainAxisAlignment.START,
                 controls=[
                     ft.Icon(icon=ft.Icons.CATEGORY_ROUNDED,color=ft.Colors.DEEP_PURPLE),
-                    ft.Text('Editar tipos',color=ferramentas.brightness_text(page),weight=ft.FontWeight.BOLD),
+                    ft.Text('Editar categorias',color=ferramentas.brightness_text(page),weight=ft.FontWeight.BOLD),
                 ]
             ),
-            on_click=lambda _:editar_tipos(page),
+            on_click=lambda _:editar_categorias(page),
             width=page.width,
         ),
         ft.Divider(height=0.5),
