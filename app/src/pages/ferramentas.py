@@ -126,7 +126,7 @@ def color_header(
                         gradient=ft.LinearGradient(
                             begin=ft.Alignment.TOP_CENTER,
                             end=ft.Alignment.BOTTOM_CENTER,
-                            colors=[ft.Colors.DEEP_PURPLE_900, ft.Colors.DEEP_PURPLE_300]
+                            colors=[ft.Colors.INDIGO_900, ft.Colors.INDIGO_300]
                         ),
                         width=page.width*0.97,
                         height=altura,

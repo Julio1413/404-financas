@@ -44,8 +44,29 @@ def inicial (page):
         categorias = ["Alimentação", "Transporte", "Moradia"]
         ferramentas.criar_arquivo("categorias.txt", "\n".join(categorias))
 
+    # Encontrar categoria mais utilizada
+    categoria_mais_utilizada = ""
+    if transacoes:
+        contagem_categorias = {}
+        for t in transacoes:
+            categoria = t.get("categoria_nome", "")
+            if categoria:
+                contagem_categorias[categoria] = contagem_categorias.get(categoria, 0) + 1
+        
+        if contagem_categorias:
+            categoria_mais_utilizada = max(contagem_categorias, key=contagem_categorias.get)
 
-
+    # Encontrar natureza mais utilizada
+    natureza_mais_utilizada = ""
+    if transacoes:
+        contagem_natureza = {}
+        for t in transacoes:
+            natureza = t.get("natureza", "")
+            if natureza:
+                contagem_natureza[natureza] = contagem_natureza.get(natureza, 0) + 1
+        
+        if contagem_natureza:
+            natureza_mais_utilizada = max(contagem_natureza, key=contagem_natureza.get)
 
 
 
@@ -83,16 +104,16 @@ def inicial (page):
         #campos de entrada
         valor = ft.TextField(
             expand=True,
-            focused_border_color=ft.Colors.DEEP_PURPLE_600,
+            focused_border_color=ft.Colors.INDIGO_600,
             border_radius=40,
             label="Valor (R$)",
             value="R$ 0,00",
             keyboard_type=ft.KeyboardType.NUMBER,
             on_change=on_change_valor
         )
-        natureza = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Natureza", options=[ft.dropdown.Option("receita"), ft.dropdown.Option("despesa")])
-        categoria_nome = ft.Dropdown(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Categoria", options=[ft.dropdown.Option(i) for i in categorias])
-        descricao = ft.TextField(expand=True,focused_border_color=ft.Colors.DEEP_PURPLE_600,border_radius=40,label="Descrição", multiline=True, keyboard_type=ft.KeyboardType.TEXT)
+        natureza = ft.Dropdown(expand=True,focused_border_color=ft.Colors.INDIGO_600,border_radius=40,label="Natureza", options=[ft.dropdown.Option("Receita"), ft.dropdown.Option("Despesa")],value=natureza_mais_utilizada if natureza_mais_utilizada else None)
+        categoria_nome = ft.Dropdown(expand=True,focused_border_color=ft.Colors.INDIGO_600,border_radius=40,label="Categoria", options=[ft.dropdown.Option(i) for i in categorias],value=categoria_mais_utilizada if categoria_mais_utilizada else None)
+        descricao = ft.TextField(expand=True,focused_border_color=ft.Colors.INDIGO_600,border_radius=40,label="Descrição", multiline=True, keyboard_type=ft.KeyboardType.TEXT)
 
         dlg = ferramentas.dialog(
                 page=page,
@@ -134,18 +155,18 @@ def inicial (page):
         page.update()
 
     saldo = 0 
-    receita_total = 0
-    despesa_total = 0
+    Receita_total = 0
+    Despesa_total = 0
     for t in transacoes:
         if t["periodo"] == f"{data_atual.month}.{data_atual.year}":
-            if t["natureza"] == "receita":
+            if t["natureza"] == "Receita":
                 saldo += t["valor"]
-                receita_total += t["valor"]
+                Receita_total += t["valor"]
             else:
                 saldo -= t["valor"]
-                despesa_total += t["valor"]
+                Despesa_total += t["valor"]
 
-    page.floating_action_button = ft.FloatingActionButton(icon=ft.Icons.ADD,on_click=lambda _: adicionar_transacao(),bgcolor=ft.Colors.DEEP_PURPLE_600,shape=ft.RoundedRectangleBorder(radius=40))
+    page.floating_action_button = ft.FloatingActionButton(icon=ft.Icons.ADD,on_click=lambda _: adicionar_transacao(),bgcolor=ft.Colors.INDIGO_600,shape=ft.RoundedRectangleBorder(radius=40))
     page.add(
         ferramentas.color_header(page=page,
                                  controles=[
@@ -157,7 +178,7 @@ def inicial (page):
                                             ft.Text(f"R$ {(saldo):.2f}".replace(".", ","),size=55,weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if saldo > 0 else (ft.Colors.WHITE if saldo == 0 else ft.Colors.RED)),
                                         ]
                                     ),
-                                    ft.Divider(ft.Colors.WHITE_24, height=1, thickness=1),
+                                    ft.Divider(ft.Colors.INDIGO_700, height=1, thickness=1),
                                     ft.Text(f'    Resumo do mês de {mes_atual}:',size=10,weight=ft.FontWeight.BOLD,color=ft.Colors.WHITE),
                                     
                                     ft.Row(
@@ -166,8 +187,8 @@ def inicial (page):
                                             ft.Column(
                                                 spacing=5,
                                                 controls=[
-                                                    ft.Text(f'+ R$ {receita_total:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700,size=25),
-                                                    ft.Text(f'- R$ {despesa_total:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.RED,size=25),
+                                                    ft.Text(f'+ R$ {Receita_total:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700,size=25),
+                                                    ft.Text(f'- R$ {Despesa_total:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.RED,size=25),
                                                 ]
                                             ),
                                             fch.PieChart(
@@ -178,18 +199,18 @@ def inicial (page):
                                                 height=100,
                                                 sections=[
                                                     fch.PieChartSection(
-                                                        value=receita_total if receita_total > 0 else 1,
+                                                        value=Receita_total if Receita_total > 0 else 0.1,
                                                         color=ft.Colors.GREEN,
                                                         badge=ft.Icon(ft.Icons.ARROW_DOWNWARD, color=ft.Colors.GREEN),
-                                                        title=f"{(receita_total/(receita_total+despesa_total)*100):.0f}%" if receita_total+despesa_total > 0 else "0%",
+                                                        title=f"{(Receita_total/(Receita_total+Despesa_total)*100):.0f}%" if Receita_total+Despesa_total > 0 else "0%",
                                                     ),
                                                     fch.PieChartSection(
-                                                        value=despesa_total if despesa_total > 0 else 1,
+                                                        value=Despesa_total if Despesa_total > 0 else 0.1,
                                                         color=ft.Colors.RED,
                                                         badge=ft.Icon(ft.Icons.ARROW_UPWARD, color=ft.Colors.RED),
-                                                        title=f"{(despesa_total/(receita_total+despesa_total)*100):.0f}%" if receita_total+despesa_total > 0 else "0%",
+                                                        title=f"{(Despesa_total/(Receita_total+Despesa_total)*100):.0f}%" if Receita_total+Despesa_total > 0 else "0%",
                                                     ),
-                                                ],
+                                                ] if Receita_total + Despesa_total > 0 else [],
                                             ),
                                         ]
                                     )
@@ -207,7 +228,7 @@ def inicial (page):
                             ft.Row(
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
-                                    ft.Text(t["natureza"],weight=ft.FontWeight.BOLD),
+                                    ft.Text(t["categoria_nome"],weight=ft.FontWeight.BOLD),
                                     ft.Text(t["data"],size=10)
                                 ]
                             ),
@@ -215,12 +236,12 @@ def inicial (page):
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[
                                     ft.Text(t["descricao"],size=12),
-                                    ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["natureza"] == "receita" else ft.Colors.RED)
-                                ]
-                            )
-                        ]
-                    )
-            )
+                                ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["natureza"] == "Receita" else ft.Colors.RED)
+                            ]
+                        )
+                    ]
+                )
+        )
 
 
 
@@ -258,7 +279,7 @@ def inicial (page):
             bgcolor=ft.Colors.with_opacity(0.1,ft.Colors.GREY),
             content=ft.Row(
                 controls=[
-                    ft.Icon(icon=ft.Icons.MONEY_ROUNDED,color=ft.Colors.DEEP_PURPLE),
+                    ft.Icon(icon=ft.Icons.MONEY_ROUNDED,color=ft.Colors.INDIGO),
                     ft.Text('Todas as transações',weight=ft.FontWeight.BOLD)
                 ],
             )
@@ -275,7 +296,7 @@ def inicial (page):
             bgcolor=ft.Colors.with_opacity(0.1,ft.Colors.GREY),
             content=ft.Row(
                 controls=[
-                    ft.Icon(icon=ft.Icons.ADB_ROUNDED,color=ft.Colors.DEEP_PURPLE),
+                    ft.Icon(icon=ft.Icons.ADB_ROUNDED,color=ft.Colors.INDIGO),
                     ft.Text('Recursos de IA',weight=ft.FontWeight.BOLD)
                 ],
             )

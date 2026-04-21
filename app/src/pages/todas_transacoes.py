@@ -3,7 +3,7 @@ import flet as ft
 from pages import home,ferramentas
 import json as js
 
-def todas_transacoes(page,natureza='',descricao='',periodo=''):
+def todas_transacoes(page,natureza='',descricao='',periodo='',categoria=''):
     #Limpando a página
     page.clean()
     page.floating_action_button = None
@@ -26,34 +26,50 @@ def todas_transacoes(page,natureza='',descricao='',periodo=''):
     
     lista_separada = []
     for t in transacoes:
-        if (natureza == '' or natureza == 'todas' or t['natureza'] == natureza) and (descricao.lower() == '' or descricao.lower() in t['descricao'].lower()) and (periodo == '' or periodo == 'Todos' or t['periodo'] == periodo):
+        if (natureza == '' or natureza == 'todas' or t['natureza'] == natureza) and (descricao.lower() == '' or descricao.lower() in t['descricao'].lower()) and (periodo == '' or periodo == 'Todos' or t['periodo'] == periodo) and (categoria == '' or categoria == 'todas' or t['categoria_nome'] == categoria):
             lista_separada.append(t)
     
-
+    def deletar_transacao(transacao_a_deletar):
+        # Remove a transação do array original
+        for i, t in enumerate(transacoes):
+            if (t['data'] == transacao_a_deletar['data'] and 
+                t['valor'] == transacao_a_deletar['valor'] and 
+                t['descricao'] == transacao_a_deletar['descricao']):
+                transacoes.pop(i)
+                break
+        
+        # Salva o JSON atualizado
+        ferramentas.criar_arquivo("TRANSAÇÕES.json", js.dumps(transacoes, indent=4, ensure_ascii=False))
+        
+        # Recarrega a página mantendo os filtros
+        todas_transacoes(page, natureza, descricao, periodo, categoria)
+    
     #Para o container
     transacoes_filtradas = []
     for t in reversed(lista_separada):
         transacoes_filtradas.append(
-            ft.Column(
-                        controls=[
-                            ft.Row(
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                                controls=[
-                                    ft.Text(t["descricao"],weight=ft.FontWeight.BOLD),
-                                    ft.Text(t["data"],size=10)
-                                ]
-                            ),
-                            ft.Row(
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                                controls=[
-                                    ft.Text(t["natureza"],size=12),
-                                    ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["natureza"] == "receita" else ft.Colors.RED)
-                                ]
-                            )
-                        ]
-                    )
+            ft.Dismissible(
+                content=ft.Column(
+                    controls=[
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            controls=[
+                                ft.Text(t["categoria_nome"],weight=ft.FontWeight.BOLD),
+                                ft.Text(t["data"],size=10)
+                            ]
+                        ),
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            controls=[
+                                ft.Text(t["descricao"],size=12),
+                                ft.Text(f'R$ {t["valor"]:.2f}'.replace(".", ","),weight=ft.FontWeight.BOLD,color=ft.Colors.GREEN_700 if t["natureza"] == "Receita" else ft.Colors.RED)
+                            ]
+                        )
+                    ]
+                ),
+                on_dismiss=lambda _: deletar_transacao(t)
             )
-        transacoes_filtradas.append(ft.Divider())   
+        )
             
             
     
@@ -80,15 +96,25 @@ def todas_transacoes(page,natureza='',descricao='',periodo=''):
     dropdown_natureza = ft.Dropdown(
         label="natureza",
         width=130,
-        border_color=ft.Colors.DEEP_PURPLE,
+        border_color=ft.Colors.INDIGO,
         border_radius=40,
-        options=[ft.dropdown.Option("todas")] + [ft.dropdown.Option(i) for i in ["receita", "despesa"]],
+        options=[ft.dropdown.Option("todas")] + [ft.dropdown.Option(i) for i in ["Receita", "Despesa"]],
         value=natureza if (natureza and natureza != '') else "todas",
     )
+
+    dropdown_categoria = ft.Dropdown(
+        label="Categoria",
+        width=130,
+        border_color=ft.Colors.INDIGO,
+        border_radius=40,
+        options=[ft.dropdown.Option("todas")] + [ft.dropdown.Option(i) for i in listar_categorias()],
+        value=categoria if (categoria and categoria != '') else "todas",
+    )
+
     
     search_bar = ft.TextField(
         border_radius=40,
-        border_color=ft.Colors.DEEP_PURPLE,
+        border_color=ft.Colors.INDIGO,
         label="Descrição",
         width=130,
         focused_border_width=1,
@@ -98,7 +124,7 @@ def todas_transacoes(page,natureza='',descricao='',periodo=''):
     dropdown_periodo = ft.Dropdown(
         label="Período",
         width=130,
-        border_color=ft.Colors.DEEP_PURPLE,
+        border_color=ft.Colors.INDIGO,
         border_radius=40,
         options=[ft.dropdown.Option("Todos")] + [ft.dropdown.Option(i) for i in periodos],
         value=periodo if (periodo and periodo != '') else "Todos",
@@ -110,8 +136,9 @@ def todas_transacoes(page,natureza='',descricao='',periodo=''):
         expand=True,
         alignment=ft.MainAxisAlignment.START,
         controls=[
-            ft.IconButton(icon=ft.Icons.SEARCH_ROUNDED, on_click=lambda _: todas_transacoes(page, dropdown_natureza.value,search_bar.value,dropdown_periodo.value), bgcolor=ft.Colors.DEEP_PURPLE,width=50,height=50),
+            ft.IconButton(icon=ft.Icons.SEARCH_ROUNDED, on_click=lambda _: todas_transacoes(page, dropdown_natureza.value,search_bar.value,dropdown_periodo.value,dropdown_categoria.value), bgcolor=ft.Colors.INDIGO,width=50,height=50),
             dropdown_natureza,
+            dropdown_categoria,
             dropdown_periodo,
             search_bar
             ]
@@ -123,7 +150,7 @@ def todas_transacoes(page,natureza='',descricao='',periodo=''):
     page.add(
         ft.Container(
             width=page.width,
-            height=page.height*0.68,
+            height=page.height*0.665,
             bgcolor=ft.Colors.with_opacity(0.1,ft.Colors.GREY),
             padding=ft.Padding.only(left=20, right=20,top=20),
             margin=10,
@@ -137,7 +164,7 @@ def todas_transacoes(page,natureza='',descricao='',periodo=''):
     )
     if natureza != '' or descricao != '':
         page.show_dialog(
-            ft.SnackBar(ft.Text(f'Foram encontradas {int(len(transacoes_filtradas)/2)} transações!'),bgcolor=ft.Colors.DEEP_PURPLE)
+            ft.SnackBar(ft.Text(f'Foram encontradas {int(len(transacoes_filtradas)/2)} transações!'),bgcolor=ft.Colors.INDIGO)
         )
     
 

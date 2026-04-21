@@ -4,6 +4,7 @@ import time
 print("Importando configs...")
 def configs(page):
     page.clean()
+    page.floating_action_button = None
     
     #Fun,ões essenciais
     def deslogar(_):
@@ -68,7 +69,7 @@ def configs(page):
                 editar_categorias(e)
 
         def adicionar_categoria(e):
-            campo_nome = ft.TextField(label="Nome da categoria", autofocus=True,border_color=ft.Colors.DEEP_PURPLE,border_radius=40)
+            campo_nome = ft.TextField(label="Nome da categoria", autofocus=True,border_color=ft.Colors.INDIGO,border_radius=40)
             def salvar(e):
                 nome = campo_nome.value.strip() if campo_nome.value else ""
                 if nome and nome not in categorias:
@@ -145,7 +146,7 @@ def configs(page):
         width=page.width,
         bgcolor=ft.Colors.TRANSPARENT,
         selected_index=0,
-        on_change=definir_tema,thumb_color=ft.Colors.DEEP_PURPLE_700,
+        on_change=definir_tema,thumb_color=ft.Colors.INDIGO_700,
         controls=[
             ft.Text("Auto"),
             ft.Text("Escuro"),
@@ -157,7 +158,7 @@ def configs(page):
     chave = ft.TextField(
         label="Chave de API do Google Gemini",
         border_radius=40,
-        focused_border_color=ft.Colors.DEEP_PURPLE,
+        focused_border_color=ft.Colors.INDIGO,
         expand=True,
         hint_text="Digite sua chave de API do Google Gemini",
         password=True,
@@ -170,22 +171,19 @@ def configs(page):
     page.add(ft.Column(expand=True,spacing=10,controls=[
         ft.Placeholder(color=ft.Colors.TRANSPARENT,height=1),
         bright_options,
-        ft.Divider(height=0.5),
         ft.ElevatedButton(
             height=50,
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.START,
                 controls=[
-                    ft.Icon(icon=ft.Icons.CATEGORY_ROUNDED,color=ft.Colors.DEEP_PURPLE),
+                    ft.Icon(icon=ft.Icons.CATEGORY_ROUNDED,color=ft.Colors.INDIGO),
                     ft.Text('Editar categorias',color=ferramentas.brightness_text(page),weight=ft.FontWeight.BOLD),
                 ]
             ),
             on_click=lambda _:editar_categorias(page),
             width=page.width,
         ),
-        ft.Divider(height=0.5),
         chave,
-        ft.Divider(),
         
         
         #placeholder
