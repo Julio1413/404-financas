@@ -9,7 +9,7 @@ authors = [
 ]
 dependencies = [
     "flet>=0.83.0",
-    "google-generativeai>=0.8.6"
+    "google-genai>=1.74.0"
 ]
 
 [dependency-groups]
